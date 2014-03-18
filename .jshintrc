@@ -1,0 +1,14 @@
+{
+    "asi": false,
+    "expr": true,
+    "loopfunc": true,
+    "curly": false,
+    "evil": true,
+    "white": true,
+    "undef": true,
+    "node": true,
+    "indent": 4,
+    "browser": true,
+    "eqnull": true,
+    "predef": []
+}
