@@ -1,7 +1,10 @@
-var _ = require('underscore');
-var extend = require('ampersand-class-extend');
+var classExtend = require('ampersand-class-extend');
 var Events = require('backbone-events-standalone');
 var ampHistory = require('./ampersand-history');
+var extend = require('extend-object');
+var result = require('lodash.result');
+var isFunction = require('lodash.isFunction');
+var isRegExp = require('lodash.isRegExp');
 
 
 // Routers map faux-URLs to actions, and fire events when routes are
@@ -22,7 +25,7 @@ var splatParam    = /\*\w+/g;
 var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
 
 // Set up all inheritable **Backbone.Router** properties and methods.
-_.extend(Router.prototype, Events, {
+extend(Router.prototype, Events, {
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -35,8 +38,8 @@ _.extend(Router.prototype, Events, {
     //     });
     //
     route: function (route, name, callback) {
-        if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-        if (_.isFunction(name)) {
+        if (!isRegExp(route)) route = this._routeToRegExp(route);
+        if (isFunction(name)) {
             callback = name;
             name = '';
         }
@@ -70,8 +73,8 @@ _.extend(Router.prototype, Events, {
     // routes can be defined at the bottom of the route map.
     _bindRoutes: function () {
         if (!this.routes) return;
-        this.routes = _.result(this, 'routes');
-        var route, routes = _.keys(this.routes);
+        this.routes = result(this, 'routes');
+        var route, routes = Object.keys(this.routes);
         while ((route = routes.pop()) != null) {
             this.route(route, this.routes[route]);
         }
@@ -95,7 +98,7 @@ _.extend(Router.prototype, Events, {
     // treated as `null` to normalize cross-browser behavior.
     _extractParameters: function (route, fragment) {
         var params = route.exec(fragment).slice(1);
-        return _.map(params, function (param, i) {
+        return params.map(function (param, i) {
             // Don't decode the search params.
             if (i === params.length - 1) return param || null;
             return param ? decodeURIComponent(param) : null;
@@ -104,4 +107,4 @@ _.extend(Router.prototype, Events, {
 
 });
 
-Router.extend = extend;
+Router.extend = classExtend;
