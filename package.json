@@ -9,9 +9,9 @@
   "dependencies": {
     "ampersand-class-extend": "0.x.x",
     "backbone-events-standalone": "0.x.x",
-    "get-result": "0.x.x",
-    "jquery-browserify": "1.x.x",
-    "underscore": "1.x.x",
+    "underscore": "1.x.x"
+  },
+  "devDependencies": {
     "precommit-hook": "~0.3.10"
   },
   "homepage": "https://github.com/ampersandjs/ampersand-router",
