@@ -11,8 +11,10 @@
     "backbone-events-standalone": "0.x.x",
     "get-result": "0.x.x",
     "jquery-browserify": "1.x.x",
-    "underscore": "1.x.x",
-    "precommit-hook": "~0.3.10"
+    "underscore": "1.x.x"
+  },
+  "devDependencies": {
+    "precommit-hook": "~0.3.10"    
   },
   "homepage": "https://github.com/ampersandjs/ampersand-router",
   "keywords": [
