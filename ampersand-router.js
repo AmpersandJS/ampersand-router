@@ -8,10 +8,10 @@ var ampHistory = require('./ampersand-history');
 // matched. Creating a new one sets its `routes` hash, if not set statically.
 var Router = module.exports = function (options) {
     options || (options = {});
+    this.history = options.history || ampHistory;
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
     this.initialize.apply(this, arguments);
-    this.history = ampHistory;
 };
 
 // Cached regular expressions for matching named param parts and splatted
@@ -42,25 +42,26 @@ _.extend(Router.prototype, Events, {
         }
         if (!callback) callback = this[name];
         var router = this;
-        ampHistory.route(route, function (fragment) {
+        this.history.route(route, function (fragment) {
             var args = router._extractParameters(route, fragment);
-            router.execute(callback, args);
-            router.trigger.apply(router, ['route:' + name].concat(args));
-            router.trigger('route', name, args);
-            ampHistory.trigger('route', router, name, args);
+            if (router.execute(callback, args, name) !== false) {
+                router.trigger.apply(router, ['route:' + name].concat(args));
+                router.trigger('route', name, args);
+                router.history.trigger('route', router, name, args);
+            }
         });
         return this;
     },
 
     // Execute a route handler with the provided parameters.  This is an
     // excellent place to do pre-route setup or post-route cleanup.
-    execute: function (callback, args) {
+    execute: function (callback, args, name) {
         if (callback) callback.apply(this, args);
     },
 
     // Simple proxy to `ampHistory` to save a fragment into the history.
     navigate: function (fragment, options) {
-        ampHistory.navigate(fragment, options);
+        this.history.navigate(fragment, options);
         return this;
     },
 

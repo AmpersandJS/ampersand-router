@@ -46,7 +46,8 @@ _.extend(History.prototype, Events, {
 
     // Are we at the app root?
     atRoot: function () {
-        return this.location.pathname.replace(/[^\/]$/, '$&/') === this.root;
+        var path = this.location.pathname.replace(/[^\/]$/, '$&/');
+        return path === this.root && !this.location.search;
     },
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
@@ -56,14 +57,20 @@ _.extend(History.prototype, Events, {
         return match ? match[1] : '';
     },
 
+    // Get the pathname and search params, without the root.
+    getPath: function () {
+        var path = decodeURI(this.location.pathname + this.location.search);
+        var root = this.root.slice(0, -1);
+        if (!path.indexOf(root)) path = path.slice(root.length);
+        return path.slice(1);
+    },
+
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
     getFragment: function (fragment, forcePushState) {
         if (fragment == null) {
             if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-                fragment = decodeURI(this.location.pathname + this.location.search);
-                var root = this.root.replace(trailingSlash, '');
-                if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
+                fragment = this.getPath();
             } else {
                 fragment = this.getHash();
             }
@@ -189,7 +196,7 @@ _.extend(History.prototype, Events, {
         var url = this.root + (fragment = this.getFragment(fragment || ''));
 
         // Strip the hash for matching.
-        fragment = fragment.replace(pathStripper, '');
+        fragment = decodeURI(fragment.replace(pathStripper, ''));
 
         if (this.fragment === fragment) return;
         this.fragment = fragment;
