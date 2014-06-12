@@ -1,3 +1,6 @@
+//Don't want to call these, but it breaks IE9, so welp
+window.history.pushState = window.history.replaceState = function () {};
+
 var tape = require('tape');
 var test = tape;
 
@@ -34,9 +37,6 @@ function module(moduleName, opts) {
             if (opts.teardown) opts.teardown();
             if (!n) t.end();
         });
-    };
-    test.skip = function (name) {
-        console.log('---------SKIPPING', moduleName, ':', name, '--------------');
     };
 }
 
@@ -863,7 +863,6 @@ function module(moduleName, opts) {
             }
         });
         var router = new Router({ history: Backbone.history });
-        console.log(router);
         Backbone.history.start({pushState: true});
     });
 
