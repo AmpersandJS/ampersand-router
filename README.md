@@ -2,6 +2,8 @@
 
 Clientside router with fallbacks for browsers that don't support pushState. Mostly lifted from Backbone.js.
 
+Ampersand-router also adds a `redirectTo` method which is handy for doing "internal" redirects without breaking backbutton functionality in the browser.
+
 <!-- starthide -->
 Part of the [Ampersand.js toolkit](http://ampersandjs.com) for building clientside applications.
 <!-- endhide -->
@@ -21,7 +23,7 @@ var Router = require('ampersand-router');
 module.exports = Router.extend({
     routes: {
         '': 'home',
-        'collections/:id': 'collections',
+        'users/:id': 'userDetail',
         'info': 'info'
     },
 
@@ -29,6 +31,16 @@ module.exports = Router.extend({
     home: function () {
         this.trigger('newPage', new HomePage());
     },
+
+    // redirect example
+    userDetail: function (id) {
+        var user = app.users.get(id);
+        if (user) {
+            this.trigger('newPage', new HomePage());
+        } else {
+            this.redirectTo('users');
+        }
+    }
 
     ...
 }};

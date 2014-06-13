@@ -65,6 +65,12 @@ _.extend(Router.prototype, Events, {
         return this;
     },
 
+    // Helper for doing `internal` redirects without adding to history
+    // and thereby breaking backbutton functionality.
+    redirectTo: function (newUrl) {
+        this.navigate(newUrl, {replace: true, trigger: true});
+    },
+
     // Bind all defined routes to `history`. We have to reverse the
     // order of the routes here to support behavior where the most general
     // routes can be defined at the bottom of the route map.

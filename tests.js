@@ -937,4 +937,19 @@ function module(moduleName, opts) {
         Backbone.history.start();
     });
 
+    test("redirectTo", 2, function (t) {
+        Backbone.history.stop();
+        location.replace('http://example.com/redirect');
+        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        var router = new Backbone.Router({ history: Backbone.history });
+        router.route('redirect', function () {
+            t.ok('yup');
+            this.redirectTo('other');
+        });
+        router.route('other', function () {
+            t.pass();
+        });
+        Backbone.history.start({pushState: true});
+    });
+
 })();
