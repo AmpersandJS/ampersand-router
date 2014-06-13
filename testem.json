@@ -1,0 +1,12 @@
+{
+    "framework": "tap",
+    "src_files": [
+        "ampersand-history.js",
+        "ampersand-router.js"
+    ],
+    "serve_files": [
+        "tests.bundle.js"
+    ],
+    "before_tests": "browserify tests.js -o tests.bundle.js",
+    "launch_in_dev": ["PhantomJS", "Chrome"]
+}

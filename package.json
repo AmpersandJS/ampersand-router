@@ -9,10 +9,17 @@
   "dependencies": {
     "ampersand-class-extend": "0.x.x",
     "backbone-events-standalone": "0.x.x",
-    "get-result": "0.x.x",
-    "jquery-browserify": "1.x.x",
-    "underscore": "1.x.x",
-    "precommit-hook": "~0.3.10"
+    "extend-object": "^1.0.0",
+    "lodash.bind": "^2.4.1",
+    "lodash.isfunction": "^2.4.1",
+    "lodash.isregexp": "^2.4.1",
+    "lodash.result": "^2.4.1",
+    "testem": "^0.6.16"
+  },
+  "devDependencies": {
+    "precommit-hook": "~0.3.10",
+    "tape": "^2.13.2",
+    "underscore": "1.x.x"
   },
   "homepage": "https://github.com/ampersandjs/ampersand-router",
   "keywords": [
@@ -25,5 +32,9 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/ampersandjs/ampersand-router"
+  },
+  "scripts": {
+    "start": "testem",
+    "test": "testem ci"
   }
 }

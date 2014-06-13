@@ -1,17 +1,20 @@
-var _ = require('underscore');
-var extend = require('ampersand-class-extend');
+var classExtend = require('ampersand-class-extend');
 var Events = require('backbone-events-standalone');
 var ampHistory = require('./ampersand-history');
+var extend = require('extend-object');
+var result = require('lodash.result');
+var isFunction = require('lodash.isFunction');
+var isRegExp = require('lodash.isRegExp');
 
 
 // Routers map faux-URLs to actions, and fire events when routes are
 // matched. Creating a new one sets its `routes` hash, if not set statically.
 var Router = module.exports = function (options) {
     options || (options = {});
+    this.history = options.history || ampHistory;
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
     this.initialize.apply(this, arguments);
-    this.history = ampHistory;
 };
 
 // Cached regular expressions for matching named param parts and splatted
@@ -22,7 +25,7 @@ var splatParam    = /\*\w+/g;
 var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
 
 // Set up all inheritable **Backbone.Router** properties and methods.
-_.extend(Router.prototype, Events, {
+extend(Router.prototype, Events, {
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -35,32 +38,33 @@ _.extend(Router.prototype, Events, {
     //     });
     //
     route: function (route, name, callback) {
-        if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-        if (_.isFunction(name)) {
+        if (!isRegExp(route)) route = this._routeToRegExp(route);
+        if (isFunction(name)) {
             callback = name;
             name = '';
         }
         if (!callback) callback = this[name];
         var router = this;
-        ampHistory.route(route, function (fragment) {
+        this.history.route(route, function (fragment) {
             var args = router._extractParameters(route, fragment);
-            router.execute(callback, args);
-            router.trigger.apply(router, ['route:' + name].concat(args));
-            router.trigger('route', name, args);
-            ampHistory.trigger('route', router, name, args);
+            if (router.execute(callback, args, name) !== false) {
+                router.trigger.apply(router, ['route:' + name].concat(args));
+                router.trigger('route', name, args);
+                router.history.trigger('route', router, name, args);
+            }
         });
         return this;
     },
 
     // Execute a route handler with the provided parameters.  This is an
     // excellent place to do pre-route setup or post-route cleanup.
-    execute: function (callback, args) {
+    execute: function (callback, args, name) {
         if (callback) callback.apply(this, args);
     },
 
     // Simple proxy to `ampHistory` to save a fragment into the history.
     navigate: function (fragment, options) {
-        ampHistory.navigate(fragment, options);
+        this.history.navigate(fragment, options);
         return this;
     },
 
@@ -69,8 +73,8 @@ _.extend(Router.prototype, Events, {
     // routes can be defined at the bottom of the route map.
     _bindRoutes: function () {
         if (!this.routes) return;
-        this.routes = _.result(this, 'routes');
-        var route, routes = _.keys(this.routes);
+        this.routes = result(this, 'routes');
+        var route, routes = Object.keys(this.routes);
         while ((route = routes.pop()) != null) {
             this.route(route, this.routes[route]);
         }
@@ -94,7 +98,7 @@ _.extend(Router.prototype, Events, {
     // treated as `null` to normalize cross-browser behavior.
     _extractParameters: function (route, fragment) {
         var params = route.exec(fragment).slice(1);
-        return _.map(params, function (param, i) {
+        return params.map(function (param, i) {
             // Don't decode the search params.
             if (i === params.length - 1) return param || null;
             return param ? decodeURIComponent(param) : null;
@@ -103,4 +107,4 @@ _.extend(Router.prototype, Events, {
 
 });
 
-Router.extend = extend;
+Router.extend = classExtend;
