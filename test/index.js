@@ -9,8 +9,8 @@ tape.Test.prototype.strictEqual = function () {
 };
 
 var Backbone = {
-    Router: require('../ampersand-router.i'),
-    history: require('../ampersand-history.i')
+    Router: require('../ampersand-router'),
+    history: require('../ampersand-history')
 };
 Backbone.History = Backbone.history.constructor;
 

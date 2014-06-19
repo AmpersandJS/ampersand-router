@@ -33,7 +33,6 @@
     "url": "git://github.com/ampersandjs/ampersand-router"
   },
   "scripts": {
-    "start": "run-browser test/index.js",
-    "test": "run-browser test/index.js"
+    "start": "run-browser test/index.js"
   }
 }
