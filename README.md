@@ -44,7 +44,7 @@ module.exports = Router.extend({
     }
 
     ...
-}};
+});
 ```
 <!-- endhide -->
 
