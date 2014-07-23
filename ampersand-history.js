@@ -78,7 +78,7 @@ extend(History.prototype, Events, {
 
         // Figure out the initial configuration.
         // Is pushState desired ... is it available?
-        this.options          = extend({root: '/'}, this.options, options);
+        this.options          = extend({root: '/', pushState: true}, this.options, options);
         this.root             = this.options.root;
         this._wantsHashChange = this.options.hashChange !== false;
         this._hasHashChange   = 'onhashchange' in window;
