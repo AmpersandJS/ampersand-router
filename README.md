@@ -125,7 +125,7 @@ open: function(id) { ... }
 
 ### navigate `router.navigate(fragment, [options])`
 
-Whenever you reach a point in your application that you'd like to save as a URL, call *navigate* in order to update the URL. If you wish to also call the route function, set the `trigger` option to `true`. To update the URL without creating an entry in the browser's history, set the `replace` option to `true`.
+Whenever you reach a point in your application that you'd like to save as a URL, call *navigate* in order to update the URL. Route function will be called by default, but if you want to prevent it, you can set the `trigger` option to `false`. To update the URL without creating an entry in the browser's history, set the `replace` option to `true`.
 
 ```javascript
 openPage: function(pageNumber) {
@@ -135,11 +135,11 @@ openPage: function(pageNumber) {
 
 // Or ...
 
-app.navigate("help/troubleshooting", {trigger: true});
+app.navigate("help/troubleshooting", {trigger: false});
 
 // Or ...
 
-app.navigate("help/troubleshooting", {trigger: true, replace: true});
+app.navigate("help/troubleshooting", {replace: true});
 ```
 
 ### redirectTo `router.redirectTo(fragment)`

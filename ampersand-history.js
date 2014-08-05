@@ -146,12 +146,16 @@ _.extend(History.prototype, Events, {
         this.handlers.unshift({route: route, callback: callback});
     },
 
+    urlChanged: function (url) {
+        var current = this.getFragment();
+        if (current === this.fragment) return false;
+        return true;
+    },
+
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`.
     checkUrl: function (e) {
-        var current = this.getFragment();
-        if (current === this.fragment) return false;
-        this.loadUrl();
+        this.urlChanged && this.loadUrl();
     },
 
     // Attempt to load the current URL fragment. If a route succeeds with a
@@ -171,12 +175,12 @@ _.extend(History.prototype, Events, {
     // 'replace' option is passed. You are responsible for properly URL-encoding
     // the fragment in advance.
     //
-    // The options object can contain `trigger: true` if you wish to have the
-    // route callback be fired (not usually desirable), or `replace: true`, if
+    // The options object can contain `trigger: false` if you wish to have the
+    // route callback not be fired (sometimes desirable), or `replace: true`, if
     // you wish to modify the current URL without adding an entry to the history.
     navigate: function (fragment, options) {
         if (!History.started) return false;
-        if (!options || options === true) options = {trigger: !!options};
+        options = _.extend({trigger: true}, options);
 
         var url = this.root + (fragment = this.getFragment(fragment || ''));
 
@@ -202,7 +206,8 @@ _.extend(History.prototype, Events, {
         } else {
             return this.location.assign(url);
         }
-        if (options.trigger) return this.loadUrl(fragment);
+
+        if (options.trigger && this.urlChanged()) return this.loadUrl(fragment);
     },
 
     // Update the hash location, either replacing the current entry, or adding

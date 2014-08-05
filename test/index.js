@@ -247,13 +247,13 @@ function module(moduleName, opts) {
     });
 
     test("routes via navigate", 2, function (t) {
-        Backbone.history.navigate('search/manhattan/p20', {trigger: true});
+        Backbone.history.navigate('search/manhattan/p20');
         t.equal(router.query, 'manhattan');
         t.equal(router.page, '20');
     });
 
     test("routes via navigate with params", 1, function (t) {
-        Backbone.history.navigate('query/test?a=b', {trigger: true});
+        Backbone.history.navigate('query/test?a=b');
         t.equal(router.queryArgs, 'a=b');
     });
 
@@ -267,6 +267,7 @@ function module(moduleName, opts) {
         t.ok(Backbone.history.navigate('search/manhattan/p20', true));
     });
 
+    // I guess that this test is currently redundant after we switched to `{trigger: true}` by default
     test("route precedence via navigate", 6, function (t) {
         // check both 0.9.x and backwards-compatibility options
         _.each([ { trigger: true }, true ], function (options) {
@@ -290,7 +291,7 @@ function module(moduleName, opts) {
 
     test("use implicit callback if none provided", 1, function (t) {
         router.count = 0;
-        router.navigate('implicit', {trigger: true});
+        router.navigate('implicit');
         t.equal(router.count, 1);
     });
 
@@ -427,7 +428,7 @@ function module(moduleName, opts) {
 
     test("#967 - Route callback gets passed encoded values.", 3, function (t) {
         var route = 'has%2Fslash/complex-has%23hash/has%20space';
-        Backbone.history.navigate(route, {trigger: true});
+        Backbone.history.navigate(route);
         t.strictEqual(router.first, 'has/slash');
         t.strictEqual(router.part, 'has#hash');
         t.strictEqual(router.rest, 'has space');
@@ -444,9 +445,9 @@ function module(moduleName, opts) {
     });
 
     test("#2666 - Hashes with UTF8 in them.", 2, function (t) {
-        Backbone.history.navigate('charñ', {trigger: true});
+        Backbone.history.navigate('charñ');
         t.equal(router.charType, 'UTF');
-        Backbone.history.navigate('char%C3%B1', {trigger: true});
+        Backbone.history.navigate('char%C3%B1');
         t.equal(router.charType, 'UTF');
     });
 
