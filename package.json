@@ -9,6 +9,8 @@
   "dependencies": {
     "ampersand-class-extend": "^1.0.0",
     "backbone-events-standalone": "0.2.2",
+    "jshint": "^2.5.3",
+    "precommit-hook": "^1.0.7",
     "underscore": "^1.6.0"
   },
   "devDependencies": {
@@ -33,6 +35,7 @@
     "url": "git://github.com/ampersandjs/ampersand-router"
   },
   "scripts": {
-    "start": "run-browser test/index.js"
+    "start": "run-browser test/index.js",
+    "test": "browserify test/index.js | tape-run | tap-spec"
   }
 }

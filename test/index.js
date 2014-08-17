@@ -231,12 +231,12 @@ function module(moduleName, opts) {
     });
 
     test("routes (simple, but unicode)", 4, function (t) {
-        location.replace('http://example.com#search/тест');
+        location.replace('http://example.com#search/' + encodeURIComponent('тест'));
         Backbone.history.checkUrl();
-        t.equal(router.query, "тест");
+        t.equal(router.query, 'тест');
         t.equal(router.page, null);
         t.equal(lastRoute, 'search');
-        t.equal(lastArgs[0], "тест");
+        t.equal(lastArgs[0], 'тест');
     });
 
     test("routes (two part)", 2, function (t) {
@@ -857,7 +857,7 @@ function module(moduleName, opts) {
         Backbone.history = _.extend(new Backbone.History(), {location: location});
         var Router = Backbone.Router.extend({
             routes: {
-                myyjä: function () {
+                'myyjä': function () {
                     t.ok(true);
                 }
             }
