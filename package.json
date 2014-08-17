@@ -11,7 +11,7 @@
     "backbone-events-standalone": "0.2.2",
     "jshint": "^2.5.3",
     "precommit-hook": "^1.0.7",
-    "underscore": "^1.6.0"
+    "underscore": "1.6.0"
   },
   "devDependencies": {
     "browserify": "^4.1.10",
@@ -19,8 +19,7 @@
     "run-browser": "^1.3.1",
     "tap-spec": "^0.2.0",
     "tape": "^2.13.2",
-    "tape-run": "^0.1.1",
-    "underscore": "1.x.x"
+    "tape-run": "^0.1.1"
   },
   "homepage": "https://github.com/ampersandjs/ampersand-router",
   "keywords": [
