@@ -1,6 +1,7 @@
 The MIT License (MIT)
 
-Copyright (c) 2010-2014 Jeremy Ashkenas, DocumentCloud
+Original work Copyright (c) 2010-2014 Jeremy Ashkenas, DocumentCloud
+Modified work Copyright (c) 2014 Henrik Joreteg, Philip Roberts, &yet
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
