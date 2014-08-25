@@ -1,5 +1,6 @@
-Original work Copyright (c) 2010-2014 Jeremy Ashkenas, DocumentCloud
-Modified work Copyright (c) 2014 Henrik Joreteg, Philip Roberts, &yet
+# [Backbone](https://github.com/jashkenas/backbone/blob/master/LICENSE "Backbone LICENSE")
+
+Copyright (c) 2010-2014 Jeremy Ashkenas, DocumentCloud
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
