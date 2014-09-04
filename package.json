@@ -1,7 +1,7 @@
 {
   "name": "ampersand-router",
   "description": "Clientside router with fallbacks for browsers that don't support pushState. Mostly lifted from Backbone.js.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Henrik Joreteg <henrik@andyet.net>",
   "bugs": {
     "url": "https://github.com/ampersandjs/ampersand-router/issues"
