@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "browserify": "^4.1.10",
+    "phantomjs": "^1.9.7-15",
     "precommit-hook": "~0.3.10",
     "run-browser": "^1.3.1",
     "tap-spec": "^0.2.0",
