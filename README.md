@@ -74,7 +74,7 @@ var AppRouter = AmpersandRouter.extend({
 });
 ```
 
-### routers `router.routes`
+### routes `router.routes`
 
 The routes hash maps URLs with parameters to functions on your router (or just direct function definitions, if you prefer), similar to the [View](#ampersand-view)'s [events hash](#ampersand-view-events). Routes can contain parameter parts, `:param`, which match a single URL component between slashes; and splat parts `*splat`, which can match any number of URL components. Part of a route can be made optional by surrounding it in parentheses `(/:optional)`.
 
