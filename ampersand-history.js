@@ -1,5 +1,8 @@
 var Events = require('backbone-events-standalone');
-var _ = require('underscore');
+var _ = {
+    bind: require('lodash.bind'),
+    extend: require('lodash.assign')
+};
 
 
 // Handles cross-browser history management, based on either
