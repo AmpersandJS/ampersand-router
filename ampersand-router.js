@@ -1,3 +1,4 @@
+/*$AMPERSAND_VERSION*/
 var classExtend = require('ampersand-class-extend');
 var Events = require('backbone-events-standalone');
 var ampHistory = require('./ampersand-history');
