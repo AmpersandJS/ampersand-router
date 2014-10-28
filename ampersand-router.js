@@ -2,8 +2,12 @@
 var classExtend = require('ampersand-class-extend');
 var Events = require('backbone-events-standalone');
 var ampHistory = require('./ampersand-history');
-var _ = require('underscore');
-
+var _ = {
+    extend: require('lodash.assign'),
+    isFunction: require('lodash.isfunction'),
+    isRegExp: require('lodash.isregexp'),
+    result: require('lodash.result')
+};
 
 // Routers map faux-URLs to actions, and fire events when routes are
 // matched. Creating a new one sets its `routes` hash, if not set statically.
