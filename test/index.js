@@ -952,4 +952,20 @@ function module(moduleName, opts) {
         Backbone.history.start({pushState: true});
     });
 
+    test("reload", 2, function (t) {
+        Backbone.history.stop();
+        location.replace('http://example.com/foo');
+        var Router = Backbone.Router.extend({
+            routes: {'foo': 'foo'},
+            foo: function () {
+                t.ok('yep');//Should get called twice
+            }
+        });
+        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        var router = new Router({ history: Backbone.history });
+        Backbone.history.start();
+        router.navigate('foo', {trigger: true});
+        router.reload();
+    });
+
 })();

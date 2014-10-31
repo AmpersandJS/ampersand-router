@@ -66,6 +66,13 @@ _.extend(Router.prototype, Events, {
         return this;
     },
 
+    // Reload the current route as if it was navigated to from somewhere
+    // else
+    reload: function () {
+        this.history.loadUrl(this.history.fragment);
+        return this;
+    },
+
     // Helper for doing `internal` redirects without adding to history
     // and thereby breaking backbutton functionality.
     redirectTo: function (newUrl) {

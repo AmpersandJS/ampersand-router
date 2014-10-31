@@ -142,6 +142,11 @@ app.navigate("help/troubleshooting", {trigger: true});
 app.navigate("help/troubleshooting", {trigger: true, replace: true});
 ```
 
+### reload `router.reload()`
+
+Allows you to re-navigate to the same page.  Re-runs the route handler
+for the current url.
+
 ### redirectTo `router.redirectTo(fragment)`
 
 Sometimes you want to be able to redirect to a different route in your application without adding an entry in the browser's history. RedirectTo is just a shorthand for calling [navigate](#ampersand-router-navigate) with both `trigger` and `replace` set to `true`.
