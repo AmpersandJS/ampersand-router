@@ -42,7 +42,10 @@ function module(moduleName, opts) {
 
 
 (function () {
-    var _ = require('underscore');
+    var bind = require('amp-bind');
+    var extend = require('amp-extend');
+    var each = require('amp-each');
+    var pick = require('amp-pick');
 
     var router = null;
     var location = null;
@@ -58,12 +61,12 @@ function module(moduleName, opts) {
         this.replace(href);
     };
 
-    _.extend(Location.prototype, {
+    extend(Location.prototype, {
         parser: document.createElement('a'),
 
         replace: function (href) {
             this.parser.href = href;
-            _.extend(this, _.pick(this.parser,
+            extend(this, pick(this.parser,
               'href',
               'hash',
               'host',
@@ -86,7 +89,7 @@ function module(moduleName, opts) {
         setup: function () {
             location = new Location('http://example.com');
             history.location = location;
-            Backbone.history = _.extend(new Backbone.History(), {location: location});
+            Backbone.history = extend(new Backbone.History(), {location: location});
             router = new Router({testing: 101, history: Backbone.history});
             Backbone.history.interval = 9;
             Backbone.history.start({pushState: false});
@@ -108,7 +111,7 @@ function module(moduleName, opts) {
             this.value = value;
         }
     };
-    _.bindAll(ExternalObject, 'routingFunction');
+    ExternalObject.routingFunction = bind(ExternalObject.routingFunction, ExternalObject);
 
     var Router = Backbone.Router.extend({
 
@@ -269,7 +272,7 @@ function module(moduleName, opts) {
 
     test("route precedence via navigate", 6, function (t) {
         // check both 0.9.x and backwards-compatibility options
-        _.each([ { trigger: true }, true ], function (options) {
+        each([ { trigger: true }, true ], function (options) {
             Backbone.history.navigate('contacts', options);
             t.equal(router.contact, 'index');
             Backbone.history.navigate('contacts/new', options);
@@ -407,12 +410,12 @@ function module(moduleName, opts) {
         location.replace('http://example.com/root/foo');
 
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         Backbone.history.start({root: '/root', hashChange: false, silent: true});
         t.strictEqual(Backbone.history.getFragment(), 'foo');
 
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         Backbone.history.start({root: '/root/', hashChange: false, silent: true});
         t.strictEqual(Backbone.history.getFragment(), 'foo');
     });
@@ -453,7 +456,7 @@ function module(moduleName, opts) {
     test("#1185 - Use pathname when hashChange is not wanted.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/path/name#hash');
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         Backbone.history.start({hashChange: false});
         var fragment = Backbone.history.getFragment();
         t.strictEqual(fragment, location.pathname.replace(/^\//, ''));
@@ -462,7 +465,7 @@ function module(moduleName, opts) {
     test("#1206 - Strip leading slash before location.assign.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root/');
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         Backbone.history.start({hashChange: false, root: '/root/'});
         location.assign = function (pathname) {
             t.strictEqual(pathname, '/root/fragment');
@@ -473,7 +476,7 @@ function module(moduleName, opts) {
     test("#1387 - Root fragment without trailing slash.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root');
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         Backbone.history.start({hashChange: false, root: '/root/', silent: true});
         t.strictEqual(Backbone.history.getFragment(), '');
     });
@@ -481,7 +484,7 @@ function module(moduleName, opts) {
     test("#1366 - History does not prepend root to fragment.", 2, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root/');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -501,7 +504,7 @@ function module(moduleName, opts) {
     test("Normalize root.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -520,7 +523,7 @@ function module(moduleName, opts) {
     test("Normalize root.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root#fragment');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {},
@@ -538,7 +541,7 @@ function module(moduleName, opts) {
     test("Normalize root.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root');
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         Backbone.history.loadUrl = function () {t.ok(true); };
         Backbone.history.start({
             pushState: true,
@@ -549,7 +552,7 @@ function module(moduleName, opts) {
     test("Normalize root - leading slash.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -563,7 +566,7 @@ function module(moduleName, opts) {
     test("Transition from hashChange to pushState.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root#x/y');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -581,7 +584,7 @@ function module(moduleName, opts) {
     test("#1619: Router: Normalize empty root", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -595,7 +598,7 @@ function module(moduleName, opts) {
     test("#1619: Router: nagivate with empty root", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -617,7 +620,7 @@ function module(moduleName, opts) {
         location.replace = function (url) {
             t.strictEqual(url, '/root/#x/y?a=b');
         };
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: null,
@@ -633,7 +636,7 @@ function module(moduleName, opts) {
     test("#1695 - hashChange to pushState with search.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root#x/y?a=b');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -700,7 +703,7 @@ function module(moduleName, opts) {
         var RouterExtended = RouterBase.extend({
             routes: function () {
                 var _super = RouterExtended.__super__.routes;
-                return _.extend(_super(),
+                return extend(_super(),
                                 { show:   "show",
                                     search: "search" });
             }
@@ -713,7 +716,7 @@ function module(moduleName, opts) {
     test("#2538 - hashChange to pushState only if both requested.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/root?a=b#x/y');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -730,7 +733,7 @@ function module(moduleName, opts) {
 
     test('No hash fallback.', 1, function (t) {
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -757,7 +760,7 @@ function module(moduleName, opts) {
 
     test('#2656 - No trailing slash on root.', 1, function (t) {
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -772,7 +775,7 @@ function module(moduleName, opts) {
 
     test('#2656 - No trailing slash on root.', 1, function (t) {
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -787,7 +790,7 @@ function module(moduleName, opts) {
 
     test('#2765 - Fragment matching sans query/hash.', 2, function (t) {
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -822,7 +825,7 @@ function module(moduleName, opts) {
 
     test('Navigate to a hash url.', 1, function (t) {
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         Backbone.history.start({pushState: true});
         var Router = Backbone.Router.extend({
             routes: {
@@ -838,7 +841,7 @@ function module(moduleName, opts) {
 
     test('#navigate to a hash url.', 1, function (t) {
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         Backbone.history.start({pushState: true});
         var Router = Backbone.Router.extend({
             routes: {
@@ -854,7 +857,7 @@ function module(moduleName, opts) {
     test('unicode pathname', 1, function (t) {
         location.replace('http://example.com/myyjä');
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         var Router = Backbone.Router.extend({
             routes: {
                 'myyjä': function () {
@@ -869,7 +872,7 @@ function module(moduleName, opts) {
     test('newline in route', 1, function (t) {
         location.replace('http://example.com/stuff%0Anonsense?param=foo%0Abar');
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         var Router = Backbone.Router.extend({
             routes: {
                 'stuff\nnonsense': function () {
@@ -884,7 +887,7 @@ function module(moduleName, opts) {
     test('Router#execute receives callback, args, name.', 3, function (t) {
         location.replace('http://example.com#foo/123/bar?x=y');
         Backbone.history.stop();
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         var Router = Backbone.Router.extend({
             routes: {'foo/:id/bar': 'foo'},
             foo: function () {},
@@ -904,7 +907,7 @@ function module(moduleName, opts) {
         location.replace = function (url) {
             t.strictEqual(url, '/#?a=b');
         };
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: null
         });
@@ -914,7 +917,7 @@ function module(moduleName, opts) {
     test("#3123 - History#navigate decodes before comparison.", 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/shop/search?keyword=short%20dress');
-        Backbone.history = _.extend(new Backbone.History(), {
+        Backbone.history = extend(new Backbone.History(), {
             location: location,
             history: {
                 pushState: function () {t.ok(false); },
@@ -929,7 +932,7 @@ function module(moduleName, opts) {
     test('#3175 - Urls in the params', 1, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com#login?a=value&backUrl=https%3A%2F%2Fwww.msn.com%2Fidp%2Fidpdemo%3Fspid%3Dspdemo%26target%3Db');
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         var router = new Backbone.Router({ history: Backbone.history });
         router.route('login', function (params) {
             t.strictEqual(params, 'a=value&backUrl=https%3A%2F%2Fwww.msn.com%2Fidp%2Fidpdemo%3Fspid%3Dspdemo%26target%3Db');
@@ -940,7 +943,7 @@ function module(moduleName, opts) {
     test("redirectTo", 2, function (t) {
         Backbone.history.stop();
         location.replace('http://example.com/redirect');
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         var router = new Backbone.Router({ history: Backbone.history });
         router.route('redirect', function () {
             t.ok('yup');

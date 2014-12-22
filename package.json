@@ -12,12 +12,18 @@
     "url": "https://github.com/ampersandjs/ampersand-router/issues"
   },
   "dependencies": {
+    "amp-bind": "^1.0.1",
+    "amp-extend": "^1.0.1",
+    "amp-is-function": "^1.0.1",
+    "amp-is-regexp": "^1.0.1",
+    "amp-result": "^1.0.1",
     "ampersand-class-extend": "^1.0.0",
     "ampersand-version": "^1.0.0",
-    "backbone-events-standalone": "0.2.2",
-    "underscore": "1.6.0"
+    "backbone-events-standalone": "0.2.2"
   },
   "devDependencies": {
+    "amp-each": "^1.0.1",
+    "amp-pick": "^1.0.0",
     "browserify": "^4.1.10",
     "jshint": "^2.5.3",
     "phantomjs": "^1.9.7-15",

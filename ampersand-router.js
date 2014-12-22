@@ -2,8 +2,10 @@
 var classExtend = require('ampersand-class-extend');
 var Events = require('backbone-events-standalone');
 var ampHistory = require('./ampersand-history');
-var _ = require('underscore');
-
+var extend = require('amp-extend');
+var isRegexp = require('amp-is-regexp');
+var isFunction = require('amp-is-function');
+var result = require('amp-result');
 
 // Routers map faux-URLs to actions, and fire events when routes are
 // matched. Creating a new one sets its `routes` hash, if not set statically.
@@ -23,7 +25,7 @@ var splatParam    = /\*\w+/g;
 var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
 
 // Set up all inheritable **Backbone.Router** properties and methods.
-_.extend(Router.prototype, Events, {
+extend(Router.prototype, Events, {
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -36,8 +38,8 @@ _.extend(Router.prototype, Events, {
     //     });
     //
     route: function (route, name, callback) {
-        if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-        if (_.isFunction(name)) {
+        if (!isRegexp(route)) route = this._routeToRegExp(route);
+        if (isFunction(name)) {
             callback = name;
             name = '';
         }
@@ -77,7 +79,7 @@ _.extend(Router.prototype, Events, {
     // routes can be defined at the bottom of the route map.
     _bindRoutes: function () {
         if (!this.routes) return;
-        this.routes = _.result(this, 'routes');
+        this.routes = result(this, 'routes');
         var route, routes = Object.keys(this.routes);
         while ((route = routes.pop()) != null) {
             this.route(route, this.routes[route]);

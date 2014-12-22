@@ -1,5 +1,6 @@
 var Events = require('backbone-events-standalone');
-var _ = require('underscore');
+var extend = require('amp-extend');
+var bind = require('amp-bind');
 
 
 // Handles cross-browser history management, based on either
@@ -8,7 +9,7 @@ var _ = require('underscore');
 // and URL fragments. If the browser supports neither.
 var History = function () {
     this.handlers = [];
-    this.checkUrl = _.bind(this.checkUrl, this);
+    this.checkUrl = bind(this.checkUrl, this);
 
     // Ensure that `History` can be used outside of the browser.
     if (typeof window !== 'undefined') {
@@ -30,7 +31,7 @@ var pathStripper = /#.*$/;
 History.started = false;
 
 // Set up all inheritable **Backbone.History** properties and methods.
-_.extend(History.prototype, Events, {
+extend(History.prototype, Events, {
 
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
@@ -77,7 +78,7 @@ _.extend(History.prototype, Events, {
 
         // Figure out the initial configuration.
         // Is pushState desired ... is it available?
-        this.options          = _.extend({root: '/'}, this.options, options);
+        this.options          = extend({root: '/'}, this.options, options);
         this.root             = this.options.root;
         this._wantsHashChange = this.options.hashChange !== false;
         this._hasHashChange   = 'onhashchange' in window;
