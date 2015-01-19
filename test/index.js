@@ -85,7 +85,7 @@ function module(moduleName, opts) {
         }
     });
 
-    module("Backbone.Router", {
+    module("Router", {
         setup: function () {
             location = new Location('http://example.com');
             history.location = location;
