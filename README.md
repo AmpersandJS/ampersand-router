@@ -178,7 +178,7 @@ var Router = AmpersandRouter.extend({
 
 AmpersandRouter automatically requires and instantiates a single ampersand-history object. AmpersandHistory serves as a global router (per frame) to handle hashchange events or pushState, match the appropriate route, and trigger callbacks. You shouldn't ever have to create one of these yourself since ampersand-router already contains one.
 
-When all of your Routers have been created, and all of the routes are set up properly, call `router.history.start()` on one of your routers to begin monitoring hashchange events, and dispatching routes. Subsequent calls to `history.start()` will throw an error, and `router.history.started` is a boolean value indicating whether it has already been called.
+When all of your Routers have been created, and all of the routes are set up properly, call `router.history.start()` on one of your routers to begin monitoring hashchange events, and dispatching routes. Subsequent calls to `history.start()` will throw an error, and `router.history.started()` is a boolean value indicating whether it has already been called.
 
 Supported options:
 
