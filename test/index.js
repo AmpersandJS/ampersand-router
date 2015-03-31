@@ -46,10 +46,10 @@ function restartHistoryWithoutPushState() {
 }
 
 (function () {
-    var bind = require('amp-bind');
-    var extend = require('amp-extend');
-    var each = require('amp-each');
-    var pick = require('amp-pick');
+    var bind = require('lodash.bind');
+    var extend = require('lodash.assign');
+    var each = require('lodash.foreach');
+    var pick = require('lodash.pick');
 
     var router = null;
     var location = null;

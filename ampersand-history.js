@@ -1,6 +1,6 @@
 var Events = require('backbone-events-standalone');
-var extend = require('amp-extend');
-var bind = require('amp-bind');
+var extend = require('lodash.assign');
+var bind = require('lodash.bind');
 
 
 // Handles cross-browser history management, based on either
