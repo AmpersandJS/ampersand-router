@@ -8,11 +8,9 @@ tape.Test.prototype.strictEqual = function () {
     this.equal.apply(this, arguments);
 };
 
-var Backbone = {
-    Router: require('../ampersand-router'),
-    history: require('../ampersand-history')
-};
-Backbone.History = Backbone.history.constructor;
+var AmpHistory = require('../ampersand-history');
+var AmpRouter = require('../ampersand-router');
+var AmpHistoryConstructor = AmpHistory.constructor;
 
 function module(moduleName, opts) {
     test = function (name, n, cb) {
@@ -41,8 +39,8 @@ function module(moduleName, opts) {
 }
 
 function restartHistoryWithoutPushState() {
-    Backbone.history.stop();
-    Backbone.history.start({pushState: false});
+    AmpHistory.stop();
+    AmpHistory.start({pushState: false});
 }
 
 (function () {
@@ -94,18 +92,18 @@ function restartHistoryWithoutPushState() {
         setup: function () {
             location = new Location('http://example.com');
             history.location = location;
-            Backbone.history = extend(new Backbone.History(), {location: location});
-            router = new Router({testing: 101, history: Backbone.history});
-            Backbone.history.interval = 9;
-            Backbone.history.start();
+            AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+            router = new Router({testing: 101, history: AmpHistory});
+            AmpHistory.interval = 9;
+            AmpHistory.start();
             lastRoute = null;
             lastArgs = [];
-            Backbone.history.on('route', onRoute);
+            AmpHistory.on('route', onRoute);
         },
 
         teardown: function () {
-            Backbone.history.stop();
-            Backbone.history.off('route', onRoute);
+            AmpHistory.stop();
+            AmpHistory.off('route', onRoute);
         }
     });
 
@@ -118,7 +116,7 @@ function restartHistoryWithoutPushState() {
     };
     ExternalObject.routingFunction = bind(ExternalObject.routingFunction, ExternalObject);
 
-    var Router = Backbone.Router.extend({
+    var Router = AmpRouter.extend({
 
         count: 0,
 
@@ -225,6 +223,8 @@ function restartHistoryWithoutPushState() {
 
     });
 
+
+
     test("initialize", 1, function (t) {
         t.equal(router.testing, 101);
     });
@@ -232,7 +232,7 @@ function restartHistoryWithoutPushState() {
     test("routes (simple)", 4, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#search/news');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.query, 'news');
         t.equal(router.page, null);
         t.equal(lastRoute, 'search');
@@ -242,7 +242,7 @@ function restartHistoryWithoutPushState() {
     test("routes (simple, but unicode)", 4, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#search/' + encodeURIComponent('тест'));
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.query, 'тест');
         t.equal(router.page, null);
         t.equal(lastRoute, 'search');
@@ -252,53 +252,53 @@ function restartHistoryWithoutPushState() {
     test("routes (two part)", 2, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#search/nyc/p10');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.query, 'nyc');
         t.equal(router.page, '10');
     });
 
     test("routes via navigate", 2, function (t) {
-        Backbone.history.navigate('search/manhattan/p20');
+        AmpHistory.navigate('search/manhattan/p20');
         t.equal(router.query, 'manhattan');
         t.equal(router.page, '20');
     });
 
     test("routes via navigate with params", 1, function (t) {
-        Backbone.history.navigate('query/test?a=b');
+        AmpHistory.navigate('query/test?a=b');
         t.equal(router.queryArgs, 'a=b');
     });
 
     test("routes via navigate for backwards-compatibility", 2, function (t) {
-        Backbone.history.navigate('search/manhattan/p20', true);
+        AmpHistory.navigate('search/manhattan/p20', true);
         t.equal(router.query, 'manhattan');
         t.equal(router.page, '20');
     });
 
     test("reports matched route via nagivate", 1, function (t) {
-        t.ok(Backbone.history.navigate('search/manhattan/p20', true));
+        t.ok(AmpHistory.navigate('search/manhattan/p20', true));
     });
 
     // I guess that this test is currently redundant after we switched to `{trigger: true}` by default
     test("route precedence via navigate", 6, function (t) {
         // check both 0.9.x and backwards-compatibility options
         each([ { trigger: true }, true ], function (options) {
-            Backbone.history.navigate('contacts', options);
+            AmpHistory.navigate('contacts', options);
             t.equal(router.contact, 'index');
-            Backbone.history.navigate('contacts/new', options);
+            AmpHistory.navigate('contacts/new', options);
             t.equal(router.contact, 'new');
-            Backbone.history.navigate('contacts/foo', options);
+            AmpHistory.navigate('contacts/foo', options);
             t.equal(router.contact, 'load');
         });
     });
 
     test("loadUrl is not called for identical routes.", 1, function (t) {
-        Backbone.history.loadUrl = function () {
+        AmpHistory.loadUrl = function () {
             t.ok(false);
         };
         location.replace('http://example.com#route');
-        Backbone.history.navigate('route');
-        Backbone.history.navigate('/route');
-        Backbone.history.navigate('/route');
+        AmpHistory.navigate('route');
+        AmpHistory.navigate('/route');
+        AmpHistory.navigate('/route');
         t.ok(true);
     });
 
@@ -311,24 +311,24 @@ function restartHistoryWithoutPushState() {
     test("routes via navigate with {replace: true}", 1, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#start_here');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         location.replace = function (href) {
             t.strictEqual(href, new Location('http://example.com#end_here').href);
         };
-        Backbone.history.navigate('end_here', {replace: true});
+        AmpHistory.navigate('end_here', {replace: true});
     });
 
     test("routes (splats)", 1, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#splat/long-list/of/splatted_99args/end');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.args, 'long-list/of/splatted_99args');
     });
 
     test("routes (github)", 3, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#backbone/compare/1.0...braddunbar:with/slash');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.repo, 'backbone');
         t.equal(router.from, '1.0');
         t.equal(router.to, 'braddunbar:with/slash');
@@ -337,17 +337,17 @@ function restartHistoryWithoutPushState() {
     test("routes (optional)", 2, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#optional');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.ok(!router.arg);
         location.replace('http://example.com#optional/thing');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.arg, 'thing');
     });
 
     test("routes (complex)", 3, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#one/two/three/complex-part/four/five/six/seven');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.first, 'one/two/three');
         t.equal(router.part, 'part');
         t.equal(router.rest, 'four/five/six/seven');
@@ -356,7 +356,7 @@ function restartHistoryWithoutPushState() {
     test("routes (query)", 5, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#query/mandel?a=b&c=d');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.entity, 'mandel');
         t.equal(router.queryArgs, 'a=b&c=d');
         t.equal(lastRoute, 'query');
@@ -367,7 +367,7 @@ function restartHistoryWithoutPushState() {
     test("routes (anything)", 1, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#doesnt-match-a-route');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.anything, 'doesnt-match-a-route');
     });
 
@@ -378,14 +378,14 @@ function restartHistoryWithoutPushState() {
         });
         t.equal(ExternalObject.value, 'unset');
         location.replace('http://example.com#function/set');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(ExternalObject.value, 'set');
     });
 
     test("Decode named parameters, not splats.", 2, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#decode/a%2Fb/c%2Fd/e');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.strictEqual(router.named, 'a/b');
         t.strictEqual(router.path, 'c/d/e');
     });
@@ -396,12 +396,12 @@ function restartHistoryWithoutPushState() {
             t.ok(true);
         });
         location.replace('http://example.com#noCallback');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
     });
 
     test("No events are triggered if #execute returns false.", 1, function (t) {
         restartHistoryWithoutPushState();
-        var Router = Backbone.Router.extend({
+        var Router = AmpRouter.extend({
 
             routes: {
                 foo: function () {
@@ -416,47 +416,47 @@ function restartHistoryWithoutPushState() {
 
         });
 
-        var router = new Router({ history: Backbone.history });
+        var router = new Router({ history: AmpHistory });
 
         router.on('route route:foo', function () {
             t.ok(false);
         });
 
-        Backbone.history.on('route', function () {
+        AmpHistory.on('route', function () {
             t.ok(false);
         });
 
         location.replace('http://example.com#foo');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
     });
 
     test("#933, #908 - leading slash", 2, function (t) {
         location.replace('http://example.com/root/foo');
 
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        Backbone.history.start({root: '/root', hashChange: false, silent: true});
-        t.strictEqual(Backbone.history.getFragment(), 'foo');
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        AmpHistory.start({root: '/root', hashChange: false, silent: true});
+        t.strictEqual(AmpHistory.getFragment(), 'foo');
 
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        Backbone.history.start({root: '/root/', hashChange: false, silent: true});
-        t.strictEqual(Backbone.history.getFragment(), 'foo');
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        AmpHistory.start({root: '/root/', hashChange: false, silent: true});
+        t.strictEqual(AmpHistory.getFragment(), 'foo');
     });
 
     test("#1003 - History is started before navigate is called", 1, function (t) {
-        Backbone.history.stop();
-        Backbone.history.navigate = function () {
-            t.ok(Backbone.History.started);
+        AmpHistory.stop();
+        AmpHistory.navigate = function () {
+            t.ok(AmpHistoryConstructor.started);
         };
-        Backbone.history.start({pushState: false});
+        AmpHistory.start({pushState: false});
         // If this is not an old IE navigate will not be called.
-        if (!Backbone.history.iframe) t.ok(true);
+        if (!AmpHistory.iframe) t.ok(true);
     });
 
     test("#967 - Route callback gets passed encoded values.", 3, function (t) {
         var route = 'has%2Fslash/complex-has%23hash/has%20space';
-        Backbone.history.navigate(route);
+        AmpHistory.navigate(route);
         t.strictEqual(router.first, 'has/slash');
         t.strictEqual(router.part, 'has#hash');
         t.strictEqual(router.rest, 'has space');
@@ -465,53 +465,53 @@ function restartHistoryWithoutPushState() {
     test("correctly handles URLs with % (#868)", 3, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#search/fat%3A1.5%25');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         location.replace('http://example.com#search/fat');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.equal(router.query, 'fat');
         t.equal(router.page, null);
         t.equal(lastRoute, 'search');
     });
 
     test("#2666 - Hashes with UTF8 in them.", 2, function (t) {
-        Backbone.history.navigate('charñ');
+        AmpHistory.navigate('charñ');
         t.equal(router.charType, 'UTF');
-        Backbone.history.navigate('char%C3%B1');
+        AmpHistory.navigate('char%C3%B1');
         t.equal(router.charType, 'UTF');
     });
 
     test("#1185 - Use pathname when hashChange is not wanted.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/path/name#hash');
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        Backbone.history.start({hashChange: false});
-        var fragment = Backbone.history.getFragment();
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        AmpHistory.start({hashChange: false});
+        var fragment = AmpHistory.getFragment();
         t.strictEqual(fragment, location.pathname.replace(/^\//, ''));
     });
 
     test("#1206 - Strip leading slash before location.assign.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root/');
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        Backbone.history.start({pushState: false, hashChange: false, root: '/root/'});
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        AmpHistory.start({pushState: false, hashChange: false, root: '/root/'});
         location.assign = function (pathname) {
             t.strictEqual(pathname, '/root/fragment');
         };
-        Backbone.history.navigate('/fragment');
+        AmpHistory.navigate('/fragment');
     });
 
     test("#1387 - Root fragment without trailing slash.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root');
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        Backbone.history.start({hashChange: false, root: '/root/', silent: true});
-        t.strictEqual(Backbone.history.getFragment(), '');
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        AmpHistory.start({hashChange: false, root: '/root/', silent: true});
+        t.strictEqual(AmpHistory.getFragment(), '');
     });
 
     test("#1366 - History does not prepend root to fragment.", 2, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root/');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -519,15 +519,15 @@ function restartHistoryWithoutPushState() {
                 }
             }
         });
-        Backbone.history.start({root: '/root/', hashChange: false});
-        Backbone.history.navigate('x');
-        t.strictEqual(Backbone.history.fragment, 'x');
+        AmpHistory.start({root: '/root/', hashChange: false});
+        AmpHistory.navigate('x');
+        t.strictEqual(AmpHistory.fragment, 'x');
     });
 
     test("Normalize root.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -535,14 +535,14 @@ function restartHistoryWithoutPushState() {
                 }
             }
         });
-        Backbone.history.start({root: '/root', hashChange: false});
-        Backbone.history.navigate('fragment');
+        AmpHistory.start({root: '/root', hashChange: false});
+        AmpHistory.navigate('fragment');
     });
 
     test("Normalize root.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root#fragment');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {},
@@ -551,37 +551,37 @@ function restartHistoryWithoutPushState() {
                 }
             }
         });
-        Backbone.history.start({root: '/root'});
+        AmpHistory.start({root: '/root'});
     });
 
     test("Normalize root.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root');
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        Backbone.history.loadUrl = function () {
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        AmpHistory.loadUrl = function () {
             t.ok(true);
         };
-        Backbone.history.start({root: '/root'});
+        AmpHistory.start({root: '/root'});
     });
 
     test("Normalize root - leading slash.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function () {},
                 replaceState: function () {}
             }
         });
-        Backbone.history.start({root: 'root'});
-        t.strictEqual(Backbone.history.root, '/root/');
+        AmpHistory.start({root: 'root'});
+        t.strictEqual(AmpHistory.root, '/root/');
     });
 
     test("Transition from hashChange to pushState.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root#x/y');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -590,27 +590,27 @@ function restartHistoryWithoutPushState() {
                 }
             }
         });
-        Backbone.history.start({root: 'root'});
+        AmpHistory.start({root: 'root'});
     });
 
     test("#1619: Router: Normalize empty root", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function () {},
                 replaceState: function () {}
             }
         });
-        Backbone.history.start({root: ''});
-        t.strictEqual(Backbone.history.root, '/');
+        AmpHistory.start({root: ''});
+        t.strictEqual(AmpHistory.root, '/');
     });
 
     test("#1619: Router: nagivate with empty root", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -618,30 +618,30 @@ function restartHistoryWithoutPushState() {
                 }
             }
         });
-        Backbone.history.start({root: '', hashChange: false});
-        Backbone.history.navigate('fragment');
+        AmpHistory.start({root: '', hashChange: false});
+        AmpHistory.navigate('fragment');
     });
 
     test("Transition from pushState to hashChange.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root/x/y?a=b');
         location.replace = function (url) {
             t.strictEqual(url, '/root/#x/y?a=b');
         };
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: null,
                 replaceState: null
             }
         });
-        Backbone.history.start({root: 'root'});
+        AmpHistory.start({root: 'root'});
     });
 
     test("#1695 - hashChange to pushState with search.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root#x/y?a=b');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -650,11 +650,11 @@ function restartHistoryWithoutPushState() {
                 }
             }
         });
-        Backbone.history.start({root: 'root'});
+        AmpHistory.start({root: 'root'});
     });
 
     test("#1746 - Router allows empty route.", 1, function (t) {
-        var Router = Backbone.Router.extend({
+        var Router = AmpRouter.extend({
             routes: {'': 'empty'},
             empty: function () {},
             route: function (route) {
@@ -665,22 +665,22 @@ function restartHistoryWithoutPushState() {
     });
 
     test("#1794 - Trailing space in fragments.", 1, function (t) {
-        var history = new Backbone.History();
+        var history = new AmpHistoryConstructor();
         t.strictEqual(history.getFragment('fragment   '), 'fragment');
     });
 
     test("#1820 - Leading slash and trailing space.", 1, function (t) {
-        var history = new Backbone.History();
+        var history = new AmpHistoryConstructor();
         t.strictEqual(history.getFragment('/fragment '), 'fragment');
     });
 
     test("#1980 - Optional parameters.", 2, function (t) {
         restartHistoryWithoutPushState();
         location.replace('http://example.com#named/optional/y');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.strictEqual(router.z, undefined);
         location.replace('http://example.com#named/optional/y123');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.strictEqual(router.z, '123');
     });
 
@@ -691,11 +691,11 @@ function restartHistoryWithoutPushState() {
             t.deepEqual(args, ['x', null]);
         });
         location.replace('http://example.com#route-event/x');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
     });
 
     test("#2255 - Extend routes by making routes a function.", 1, function (t) {
-        var RouterBase = Backbone.Router.extend({
+        var RouterBase = AmpRouter.extend({
             routes: function () {
                 return {
                     home: "root",
@@ -719,9 +719,9 @@ function restartHistoryWithoutPushState() {
     });
 
     test("#2538 - hashChange to pushState only if both requested.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/root?a=b#x/y');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -730,13 +730,13 @@ function restartHistoryWithoutPushState() {
                 }
             }
         });
-        Backbone.history.start({root: 'root', hashChange: false});
+        AmpHistory.start({root: 'root', hashChange: false});
         t.ok(true);
     });
 
     test('No hash fallback.', 1, function (t) {
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function () {},
@@ -744,25 +744,25 @@ function restartHistoryWithoutPushState() {
             }
         });
 
-        var Router = Backbone.Router.extend({
+        var Router = AmpRouter.extend({
             routes: {
                 hash: function () {
                     t.ok(false);
                 }
             }
         });
-        var router = new Router({ history: Backbone.history });
+        var router = new Router({ history: AmpHistory });
 
         location.replace('http://example.com/');
-        Backbone.history.start({hashChange: false});
+        AmpHistory.start({hashChange: false});
         location.replace('http://example.com/nomatch#hash');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
         t.ok(true);
     });
 
     test('#2656 - No trailing slash on root.', 1, function (t) {
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -771,13 +771,13 @@ function restartHistoryWithoutPushState() {
             }
         });
         location.replace('http://example.com/root/path');
-        Backbone.history.start({hashChange: false, root: 'root'});
-        Backbone.history.navigate('');
+        AmpHistory.start({hashChange: false, root: 'root'});
+        AmpHistory.navigate('');
     });
 
     test('#2656 - No trailing slash on root.', 1, function (t) {
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -786,13 +786,13 @@ function restartHistoryWithoutPushState() {
             }
         });
         location.replace('http://example.com/path');
-        Backbone.history.start({hashChange: false});
-        Backbone.history.navigate('');
+        AmpHistory.start({hashChange: false});
+        AmpHistory.navigate('');
     });
 
     test('#2765 - Fragment matching sans query/hash.', 2, function (t) {
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function (state, title, url) {
@@ -801,98 +801,98 @@ function restartHistoryWithoutPushState() {
             }
         });
 
-        var Router = Backbone.Router.extend({
+        var Router = AmpRouter.extend({
             routes: {
                 path: function () {
                     t.ok(true);
                 }
             }
         });
-        var router = new Router({ history: Backbone.history });
+        var router = new Router({ history: AmpHistory });
 
         location.replace('http://example.com/');
-        Backbone.history.start({hashChange: false});
-        Backbone.history.navigate('path?query#hash', true);
+        AmpHistory.start({hashChange: false});
+        AmpHistory.navigate('path?query#hash', true);
     });
 
     test('Do not decode the search params.', 1, function (t) {
-        var Router = Backbone.Router.extend({
+        var Router = AmpRouter.extend({
             routes: {
                 path: function (params) {
                     t.strictEqual(params, 'x=y z');
                 }
             }
         });
-        var router = new Router({ history: Backbone.history });
-        Backbone.history.navigate('path?x=y%20z', true);
+        var router = new Router({ history: AmpHistory });
+        AmpHistory.navigate('path?x=y%20z', true);
     });
 
     test('Navigate to a hash url.', 1, function (t) {
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        Backbone.history.start();
-        var Router = Backbone.Router.extend({
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        AmpHistory.start();
+        var Router = AmpRouter.extend({
             routes: {
                 path: function (params) {
                     t.strictEqual(params, 'x=y');
                 }
             }
         });
-        var router = new Router({ history: Backbone.history });
+        var router = new Router({ history: AmpHistory });
         location.replace('http://example.com/path?x=y#hash');
-        Backbone.history.checkUrl();
+        AmpHistory.checkUrl();
     });
 
     test('#navigate to a hash url.', 1, function (t) {
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        Backbone.history.start();
-        var Router = Backbone.Router.extend({
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        AmpHistory.start();
+        var Router = AmpRouter.extend({
             routes: {
                 path: function (params) {
                     t.strictEqual(params, 'x=y');
                 }
             }
         });
-        var router = new Router({ history: Backbone.history });
-        Backbone.history.navigate('path?x=y#hash', true);
+        var router = new Router({ history: AmpHistory });
+        AmpHistory.navigate('path?x=y#hash', true);
     });
 
     test('unicode pathname', 1, function (t) {
         location.replace('http://example.com/myyjä');
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        var Router = Backbone.Router.extend({
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        var Router = AmpRouter.extend({
             routes: {
                 'myyjä': function () {
                     t.ok(true);
                 }
             }
         });
-        var router = new Router({ history: Backbone.history });
-        Backbone.history.start();
+        var router = new Router({ history: AmpHistory });
+        AmpHistory.start();
     });
 
     test('newline in route', 1, function (t) {
         location.replace('http://example.com/stuff%0Anonsense?param=foo%0Abar');
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        var Router = Backbone.Router.extend({
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        var Router = AmpRouter.extend({
             routes: {
                 'stuff\nnonsense': function () {
                     t.ok(true);
                 }
             }
         });
-        new Router({ history: Backbone.history });
-        Backbone.history.start();
+        new Router({ history: AmpHistory });
+        AmpHistory.start();
     });
 
     test('Router#execute receives callback, args, name.', 3, function (t) {
         location.replace('http://example.com#foo/123/bar?x=y');
-        Backbone.history.stop();
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        var Router = Backbone.Router.extend({
+        AmpHistory.stop();
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        var Router = AmpRouter.extend({
             routes: {'foo/:id/bar': 'foo'},
             foo: function () {},
             execute: function (callback, args, name) {
@@ -901,27 +901,27 @@ function restartHistoryWithoutPushState() {
                 t.strictEqual(name, 'foo');
             }
         });
-        var router = new Router({ history: Backbone.history });
-        Backbone.history.start({pushState: false});
+        var router = new Router({ history: AmpHistory });
+        AmpHistory.start({pushState: false});
     });
 
     test("pushState to hashChange with only search params.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com?a=b');
         location.replace = function (url) {
             t.strictEqual(url, '/#?a=b');
         };
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: null
         });
-        Backbone.history.start();
+        AmpHistory.start();
     });
 
     test("#3123 - History#navigate decodes before comparison.", 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/shop/search?keyword=short%20dress');
-        Backbone.history = extend(new Backbone.History(), {
+        AmpHistory = extend(new AmpHistoryConstructor(), {
             location: location,
             history: {
                 pushState: function () {
@@ -932,27 +932,27 @@ function restartHistoryWithoutPushState() {
                 }
             }
         });
-        Backbone.history.start();
-        Backbone.history.navigate('shop/search?keyword=short%20dress', true);
-        t.strictEqual(Backbone.history.fragment, 'shop/search?keyword=short dress');
+        AmpHistory.start();
+        AmpHistory.navigate('shop/search?keyword=short%20dress', true);
+        t.strictEqual(AmpHistory.fragment, 'shop/search?keyword=short dress');
     });
 
     test('#3175 - Urls in the params', 1, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com#login?a=value&backUrl=https%3A%2F%2Fwww.msn.com%2Fidp%2Fidpdemo%3Fspid%3Dspdemo%26target%3Db');
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        var router = new Backbone.Router({ history: Backbone.history });
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        var router = new AmpRouter({ history: AmpHistory });
         router.route('login', function (params) {
             t.strictEqual(params, 'a=value&backUrl=https%3A%2F%2Fwww.msn.com%2Fidp%2Fidpdemo%3Fspid%3Dspdemo%26target%3Db');
         });
-        Backbone.history.start({pushState: false});
+        AmpHistory.start({pushState: false});
     });
 
     test("redirectTo", 2, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/redirect');
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        var router = new Backbone.Router({ history: Backbone.history });
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        var router = new AmpRouter({ history: AmpHistory });
         router.route('redirect', function () {
             t.ok('yup');
             this.redirectTo('other');
@@ -960,6 +960,6 @@ function restartHistoryWithoutPushState() {
         router.route('other', function () {
             t.pass();
         });
-        Backbone.history.start();
+        AmpHistory.start();
     });
 })();

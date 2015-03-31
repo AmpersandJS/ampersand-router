@@ -156,7 +156,7 @@ extend(History.prototype, Events, {
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`.
     checkUrl: function (e) {
-        this.urlChanged && this.loadUrl();
+        this.urlChanged() && this.loadUrl();
     },
 
     // Attempt to load the current URL fragment. If a route succeeds with a
@@ -181,7 +181,7 @@ extend(History.prototype, Events, {
     // you wish to modify the current URL without adding an entry to the history.
     navigate: function (fragment, options) {
         if (!History.started) return false;
-        options = _.extend({trigger: true}, options);
+        options = extend({trigger: true}, options);
 
         var url = this.root + (fragment = this.getFragment(fragment || ''));
 
