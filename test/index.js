@@ -961,4 +961,13 @@ function restartHistoryWithoutPushState() {
         });
         Backbone.history.start();
     });
+
+    test("app can know when the history has started", 2, function (t) {
+        Backbone.history.stop();
+        var router = new Backbone.Router({ history: Backbone.history });
+        t.notOk(router.history.started());
+        Backbone.history.start();
+        t.ok(router.history.started());
+    });
+
 })();
