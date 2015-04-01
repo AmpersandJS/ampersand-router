@@ -182,9 +182,9 @@ When all of your Routers have been created, and all of the routes are set up pro
 
 Supported options:
 
-* **pushState** {Boolean} - To indicate that you'd like to use HTML5 pushState support in your application, use `router.history.start({pushState: true})`. __Defaults to false__
+* **pushState** {Boolean} - HTML5 pushState is turned on by default. However if you want to indicate that you don't want to use it in your application, you can add `{pushState: false}` to the options. __Defaults to true__
 * **hashChange** {Boolean} - If you'd like to use pushState, but have browsers that don't support it natively use full page refreshes instead, you can add `{hashChange: false}` to the options. __Defaults to true__
-* **root** {String} - If your application is not being served from the root url `/` of your domain, be sure to tell History where the root really is, as an option: `router.history.start({pushState: true, root: "/public/search/"})`. __Defaults to `/`__
+* **root** {String} - If your application is not being served from the root url `/` of your domain, be sure to tell History where the root really is, as an option: `router.history.start({root: "/public/search/"})`. __Defaults to `/`__
 * **silent** {Boolean} - If the server has already rendered the entire page, and you don't want the initial route to trigger when starting History, pass `silent: true`. __Defaults to false__
 
 When called, if a route succeeds with a match for the current URL, `router.history.start()` returns `true`. If no defined route matches the current URL, it returns `false`.

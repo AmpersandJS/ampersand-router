@@ -1,6 +1,6 @@
-var Events = require('backbone-events-standalone');
-var extend = require('amp-extend');
-var bind = require('amp-bind');
+var Events = require('ampersand-events');
+var extend = require('lodash.assign');
+var bind = require('lodash.bind');
 
 
 // Handles cross-browser history management, based on either
@@ -78,7 +78,7 @@ extend(History.prototype, Events, {
 
         // Figure out the initial configuration.
         // Is pushState desired ... is it available?
-        this.options          = extend({root: '/'}, this.options, options);
+        this.options          = extend({root: '/', pushState: true}, this.options, options);
         this.root             = this.options.root;
         this._wantsHashChange = this.options.hashChange !== false;
         this._hasHashChange   = 'onhashchange' in window;
