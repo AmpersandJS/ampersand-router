@@ -979,7 +979,7 @@ function restartHistoryWithoutPushState() {
                 t.ok('yep');//Should get called twice
             }
         });
-        Backbone.history = _.extend(new Backbone.History(), {location: location});
+        Backbone.history = extend(new Backbone.History(), {location: location});
         var router = new Router({ history: Backbone.history });
         Backbone.history.start();
         router.navigate('foo', {trigger: true});
