@@ -1,4 +1,4 @@
-var Events = require('backbone-events-standalone');
+var Events = require('ampersand-events');
 var extend = require('lodash.assign');
 var bind = require('lodash.bind');
 

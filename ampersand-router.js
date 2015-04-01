@@ -1,6 +1,6 @@
 /*$AMPERSAND_VERSION*/
 var classExtend = require('ampersand-class-extend');
-var Events = require('backbone-events-standalone');
+var Events = require('ampersand-events');
 var extend = require('lodash.assign');
 var isRegexp = require('lodash.isregexp');
 var isFunction = require('lodash.isfunction');
