@@ -154,7 +154,7 @@ extend(History.prototype, Events, {
         this.handlers.unshift({route: route, callback: callback});
     },
 
-    urlChanged: function (url) {
+    urlChanged: function () {
         var current = this.getFragment();
         if (current === this.fragment) return false;
         return true;

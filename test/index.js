@@ -292,6 +292,7 @@ function restartHistoryWithoutPushState() {
     });
 
     test("loadUrl is not called for identical routes.", 1, function (t) {
+        restartHistoryWithoutPushState();
         AmpHistory.loadUrl = function () {
             t.ok(false);
         };
