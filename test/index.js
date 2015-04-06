@@ -964,25 +964,25 @@ function restartHistoryWithoutPushState() {
     });
 
     test("app can know when the history has started", 2, function (t) {
-        Backbone.history.stop();
-        var router = new Backbone.Router({ history: Backbone.history });
+        AmpHistory.stop();
+        var router = new AmpRouter({ history: AmpHistory });
         t.notOk(router.history.started());
-        Backbone.history.start();
+        AmpHistory.start();
         t.ok(router.history.started());
     });
 
     test("reload", 2, function (t) {
-        Backbone.history.stop();
+        AmpHistory.stop();
         location.replace('http://example.com/foo');
-        var Router = Backbone.Router.extend({
+        var Router = AmpRouter.extend({
             routes: {'foo': 'foo'},
             foo: function () {
                 t.ok('yep');//Should get called twice
             }
         });
-        Backbone.history = extend(new Backbone.History(), {location: location});
-        var router = new Router({ history: Backbone.history });
-        Backbone.history.start();
+        AmpHistory = extend(new AmpHistoryConstructor(), {location: location});
+        var router = new Router({ history: AmpHistory });
+        AmpHistory.start();
         router.navigate('foo', {trigger: true});
         router.reload();
     });
