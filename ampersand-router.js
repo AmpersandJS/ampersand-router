@@ -1,11 +1,12 @@
 /*$AMPERSAND_VERSION*/
 var classExtend = require('ampersand-class-extend');
-var Events = require('backbone-events-standalone');
+var Events = require('ampersand-events');
+var extend = require('lodash.assign');
+var isRegexp = require('lodash.isregexp');
+var isFunction = require('lodash.isfunction');
+var result = require('lodash.result');
+
 var ampHistory = require('./ampersand-history');
-var extend = require('amp-extend');
-var isRegexp = require('amp-is-regexp');
-var isFunction = require('amp-is-function');
-var result = require('amp-result');
 
 // Routers map faux-URLs to actions, and fire events when routes are
 // matched. Creating a new one sets its `routes` hash, if not set statically.
@@ -65,6 +66,13 @@ extend(Router.prototype, Events, {
     // Simple proxy to `ampHistory` to save a fragment into the history.
     navigate: function (fragment, options) {
         this.history.navigate(fragment, options);
+        return this;
+    },
+
+    // Reload the current route as if it was navigated to from somewhere
+    // else
+    reload: function () {
+        this.history.loadUrl(this.history.fragment);
         return this;
     },
 

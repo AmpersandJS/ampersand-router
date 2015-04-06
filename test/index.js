@@ -44,10 +44,10 @@ function restartHistoryWithoutPushState() {
 }
 
 (function () {
-    var bind = require('amp-bind');
-    var extend = require('amp-extend');
-    var each = require('amp-each');
-    var pick = require('amp-pick');
+    var bind = require('lodash.bind');
+    var extend = require('lodash.assign');
+    var each = require('lodash.foreach');
+    var pick = require('lodash.pick');
 
     var router = null;
     var location = null;
@@ -962,4 +962,29 @@ function restartHistoryWithoutPushState() {
         });
         AmpHistory.start();
     });
+
+    test("app can know when the history has started", 2, function (t) {
+        Backbone.history.stop();
+        var router = new Backbone.Router({ history: Backbone.history });
+        t.notOk(router.history.started());
+        Backbone.history.start();
+        t.ok(router.history.started());
+    });
+
+    test("reload", 2, function (t) {
+        Backbone.history.stop();
+        location.replace('http://example.com/foo');
+        var Router = Backbone.Router.extend({
+            routes: {'foo': 'foo'},
+            foo: function () {
+                t.ok('yep');//Should get called twice
+            }
+        });
+        Backbone.history = extend(new Backbone.History(), {location: location});
+        var router = new Router({ history: Backbone.history });
+        Backbone.history.start();
+        router.navigate('foo', {trigger: true});
+        router.reload();
+    });
+
 })();

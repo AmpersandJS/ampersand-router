@@ -1,6 +1,6 @@
-var Events = require('backbone-events-standalone');
-var extend = require('amp-extend');
-var bind = require('amp-bind');
+var Events = require('ampersand-events');
+var extend = require('lodash.assign');
+var bind = require('lodash.bind');
 
 
 // Handles cross-browser history management, based on either
@@ -121,6 +121,13 @@ extend(History.prototype, Events, {
         }
 
         if (!this.options.silent) return this.loadUrl();
+    },
+
+    // Returns the value of History.started. Allows an app or units tests to
+    // check whether or not the router has been started with
+    // router.history.started(); otherwise the started flag is inaccessible
+    started: function () {
+      return History.started;
     },
 
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
