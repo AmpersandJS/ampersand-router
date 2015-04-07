@@ -17,6 +17,10 @@ npm install ampersand-router
 <!-- starthide -->
 ## example
 
+In this example the router is trigger a `newPage` event along with the instance of a page. It is up to your application to listen for this event on the router and then do something with the page instance.
+
+This is helpful when paired with the [`ampersand-view-switcher#set`](https://github.com/AmpersandJS/ampersand-view-switcher#set-switchersetviewinstance) method to ensure that the page instance is rendered into the correct container and it gets cleaned up properly via its `remove` method when a new page gets triggered by the router. Check out how the `ampersand` cli accomplishes this within its [router](https://github.com/AmpersandJS/ampersand/blob/41ff011c43e4d3adab06b4b1941583034d58195f/template/shared/client/router.js#L24-L26) and [view-switcher](https://github.com/AmpersandJS/ampersand/blob/41ff011c43e4d3adab06b4b1941583034d58195f/template/shared/client/views/main.js#L53).
+
 ```javascript
 var Router = require('ampersand-router');
 
