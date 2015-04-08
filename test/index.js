@@ -293,10 +293,10 @@ function restartHistoryWithoutPushState() {
 
     test("loadUrl is not called for identical routes.", 1, function (t) {
         restartHistoryWithoutPushState();
+        AmpHistory.navigate('route');
         AmpHistory.loadUrl = function () {
             t.ok(false);
         };
-        location.replace('http://example.com#route');
         AmpHistory.navigate('route');
         AmpHistory.navigate('/route');
         AmpHistory.navigate('/route');
