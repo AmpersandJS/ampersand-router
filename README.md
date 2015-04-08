@@ -163,7 +163,7 @@ var AppRouter = AmpersandRouter.extend({
     },
 
     dashboard: function () {
-        if (!app.me.loggedIn) return redirectTo('login');
+        if (!app.me.loggedIn) return this.redirectTo('login');
 
         // show dashboard page...
     }
