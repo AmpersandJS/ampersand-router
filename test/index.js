@@ -988,4 +988,19 @@ function restartHistoryWithoutPushState() {
         router.reload();
     });
 
+    test("router accepts routes through extend or instantiation", 2, function (t) {
+        var router1 = new (AmpRouter.extend({
+            routes: {
+                'test': 'test'
+            }
+        }))();
+        var router2 = new AmpRouter({
+            routes: {
+                'test': 'test'
+            }
+        });
+
+        t.ok(router1.routes.test, 'test');
+        t.ok(router2.routes.test, 'test');
+    });
 })();
