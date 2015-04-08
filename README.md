@@ -107,7 +107,7 @@ router.on("route:help", function(page) {
 
 ### constructor / initialize `new Router([options])`
 
-When creating a new router, you may pass its routes hash directly as an option, if you choose. All options will also be passed to your `initialize` function, if defined.
+When creating a new router, you may pass its routes hash directly as the `routes` option, if you choose. All options will also be passed to your `initialize` function, if defined.
 
 ### route `router.route(route, name, [callback])`
 
