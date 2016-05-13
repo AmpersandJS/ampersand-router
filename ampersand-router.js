@@ -1,10 +1,10 @@
 /*$AMPERSAND_VERSION*/
 var classExtend = require('ampersand-class-extend');
 var Events = require('ampersand-events');
-var extend = require('lodash.assign');
-var isRegexp = require('lodash.isregexp');
-var isFunction = require('lodash.isfunction');
-var result = require('lodash.result');
+var extend = require('lodash/assign');
+var isRegExp = require('lodash/isRegExp');
+var isFunction = require('lodash/isFunction');
+var result = require('lodash/result');
 
 var ampHistory = require('./ampersand-history');
 
@@ -39,7 +39,7 @@ extend(Router.prototype, Events, {
     //     });
     //
     route: function (route, name, callback) {
-        if (!isRegexp(route)) route = this._routeToRegExp(route);
+        if (!isRegExp(route)) route = this._routeToRegExp(route);
         if (isFunction(name)) {
             callback = name;
             name = '';

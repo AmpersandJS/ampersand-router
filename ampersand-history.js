@@ -1,6 +1,6 @@
 var Events = require('ampersand-events');
-var extend = require('lodash.assign');
-var bind = require('lodash.bind');
+var extend = require('lodash/assign');
+var bind = require('lodash/bind');
 
 
 // Handles cross-browser history management, based on either

@@ -13,20 +13,14 @@
   },
   "dependencies": {
     "ampersand-class-extend": "^1.0.0",
-    "ampersand-events": "^1.1.1",
+    "ampersand-events": "^2.0.1",
     "ampersand-version": "^1.0.0",
-    "lodash.assign": "^3.0.0",
-    "lodash.bind": "^3.1.0",
-    "lodash.isfunction": "^3.0.2",
-    "lodash.isregexp": "^3.0.1",
-    "lodash.result": "^3.0.0"
+    "lodash": "^4.11.1"
   },
   "devDependencies": {
     "jshint": "^2.5.3",
-    "lodash.foreach": "^3.0.2",
-    "lodash.pick": "^3.1.0",
-    "phantomjs": "^1.9.19",
-    "precommit-hook": "^1.0.7",
+    "phantomjs": "^2.1.7",
+    "precommit-hook": "^3.0.0",
     "tape": "^4.4.0",
     "zuul": "^3.9.0"
   },
@@ -45,6 +39,13 @@
   "scripts": {
     "start": "zuul --local -- test/index.js",
     "test": "zuul --phantom -- test/index.js",
-    "test-ci": "zuul -- test/index.js"
-  }
+    "test-ci": "zuul -- test/index.js",
+    "lint": "jshint .",
+    "validate": "npm ls"
+  },
+  "pre-commit": [
+    "lint",
+    "validate",
+    "test"
+  ]
 }
