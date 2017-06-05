@@ -111,12 +111,14 @@ extend(Router.prototype, Events, {
     // extracted decoded parameters. Empty or unmatched parameters will be
     // treated as `null` to normalize cross-browser behavior.
     _extractParameters: function (route, fragment) {
-        var params = route.exec(fragment).slice(1);
-        return params.map(function (param, i) {
-            // Don't decode the search params.
-            if (i === params.length - 1) return param || null;
-            return param ? decodeURIComponent(param) : null;
-        });
+        var encodedParams = route.exec(fragment).slice(1);
+        var searchParm = encodedParams.pop();
+        function decodeOrNull(p) {
+          return p ? decodeURIComponent(p) : null;
+        }
+        var params = encodedParams.map(decodeOrNull);
+        searchParm && params.push(searchParm);
+        return params;
     }
 
 });

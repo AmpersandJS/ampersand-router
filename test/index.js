@@ -123,6 +123,7 @@ function restartHistoryWithoutPushState() {
         routes: {
             "noCallback": "noCallback",
             "counter": "counter",
+            "noargs": "noargs",
             "search/:query": "search",
             "search/:query/p:page": "search",
             "charñ": "charUTF",
@@ -200,6 +201,10 @@ function restartHistoryWithoutPushState() {
             this.rest = rest;
         },
 
+        noargs: function() {
+          this.args = arguments;
+        },
+
         query: function (entity, args) {
             this.entity = entity;
             this.queryArgs = args;
@@ -234,7 +239,7 @@ function restartHistoryWithoutPushState() {
         location.replace('http://example.com#search/news');
         AmpHistory.checkUrl();
         t.equal(router.query, 'news');
-        t.equal(router.page, null);
+        t.equal(router.page, undefined);
         t.equal(lastRoute, 'search');
         t.equal(lastArgs[0], 'news');
     });
@@ -244,7 +249,7 @@ function restartHistoryWithoutPushState() {
         location.replace('http://example.com#search/' + encodeURIComponent('тест'));
         AmpHistory.checkUrl();
         t.equal(router.query, 'тест');
-        t.equal(router.page, null);
+        t.equal(router.page, undefined);
         t.equal(lastRoute, 'search');
         t.equal(lastArgs[0], 'тест');
     });
@@ -431,6 +436,13 @@ function restartHistoryWithoutPushState() {
         AmpHistory.checkUrl();
     });
 
+    test("Passes nothing when no arguments are defined", 1, function(t) {
+      restartHistoryWithoutPushState();
+      location.replace('http://example.com#noargs');
+      AmpHistory.checkUrl();
+      t.strictEqual(Object.keys(router.args).length, 0);
+    });
+
     test("#933, #908 - leading slash", 2, function (t) {
         location.replace('http://example.com/root/foo');
 
@@ -470,7 +482,7 @@ function restartHistoryWithoutPushState() {
         location.replace('http://example.com#search/fat');
         AmpHistory.checkUrl();
         t.equal(router.query, 'fat');
-        t.equal(router.page, null);
+        t.equal(router.page, undefined);
         t.equal(lastRoute, 'search');
     });
 
@@ -689,7 +701,7 @@ function restartHistoryWithoutPushState() {
         restartHistoryWithoutPushState();
         router.on('route', function (name, args) {
             t.strictEqual(name, 'routeEvent');
-            t.deepEqual(args, ['x', null]);
+            t.deepEqual(args, ['x']);
         });
         location.replace('http://example.com#route-event/x');
         AmpHistory.checkUrl();
