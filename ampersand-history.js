@@ -96,6 +96,7 @@ extend(History.prototype, Events, {
         // 'onhashchange' is supported, determine how we check the URL state.
         if (this._hasPushState) {
             addEventListener('popstate', this.checkUrl, false);
+            addEventListener('pageshow', this.checkUrl, false);
         } else if (this._wantsHashChange && this._hasHashChange) {
             addEventListener('hashchange', this.checkUrl, false);
         } else if (this._wantsHashChange) {
