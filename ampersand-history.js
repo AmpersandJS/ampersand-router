@@ -62,7 +62,11 @@ extend(History.prototype, Events, {
     getFragment: function (fragment) {
         if (fragment == null) {
             if (this._hasPushState || !this._wantsHashChange) {
-                fragment = this.getPath();
+                var path = this.getPath();
+                var hash = this.getHash();
+                // I`m using `&' and not `#` because somewhere along the call
+                // stack hash in the fragment is being double-encoded.
+                fragment = hash ? path + '&' + hash : path;
             } else {
                 fragment = this.getHash();
             }
@@ -192,8 +196,13 @@ extend(History.prototype, Events, {
 
         var url = this.root + (fragment = this.getFragment(fragment || ''));
 
-        // Strip the hash and decode for matching.
-        fragment = decodeURI(fragment.replace(pathStripper, ''));
+        // We only want to strip the hash if the browser doesn't support
+        // pushState.
+        if (this._hasPushState) {
+          fragment = decodeURI(fragment);
+        } else {
+          fragment = decodeURI(fragment.replace(pathStripper, ''));
+        }
 
         if (this.fragment === fragment) return;
         this.fragment = fragment;
